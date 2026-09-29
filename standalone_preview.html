@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Agriculture System — Luxury Agro UI Preview</title>
+  
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --bg-darkest: #03120e;
+      --bg-deep: #051d16;
+      --bg-surface: rgba(9, 38, 30, 0.72);
+      --glass-border: rgba(52, 211, 153, 0.18);
+      --glass-border-hover: rgba(52, 211, 153, 0.45);
+      --neon-emerald: #10b981;
+      --neon-emerald-bright: #00f59b;
+      --amber-sun: #f59e0b;
+      --water-cyan: #06b6d4;
+      --text-primary: #f0fdf4;
+      --text-secondary: #94a3b8;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+      --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 1px 1px var(--glass-border);
+      --font-main: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-main); }
+    body {
+      background-color: var(--bg-darkest);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+      position: relative;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 245, 155, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 10%, rgba(245, 158, 11, 0.07) 0%, transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(6, 182, 212, 0.07) 0%, transparent 50%),
+        radial-gradient(rgba(52, 211, 153, 0.08) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px;
+      background-attachment: fixed;
+    }
+
+    .bg-ambient-orb-1 {
+      position: fixed;
+      top: -100px;
+      right: 15%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(50px);
+    }
+
+    .sidebar { width: 280px; background: rgba(4, 23, 18, 0.75); backdrop-filter: blur(24px); border-right: 1px solid var(--glass-border); height: 100vh; position: fixed; left: 0; top: 0; display: flex; flex-direction: column; z-index: 100; }
+    .sidebar-header { padding: 26px 22px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--glass-border); }
+    .brand-icon { width: 46px; height: 46px; background: linear-gradient(135deg, rgba(0, 245, 155, 0.25) 0%, rgba(4, 120, 87, 0.5) 100%); border: 1px solid rgba(0, 245, 155, 0.4); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 0 20px rgba(0, 245, 155, 0.25); }
+    .brand-title { font-size: 1.2rem; font-weight: 800; background: linear-gradient(135deg, #ffffff 0%, var(--neon-emerald-bright) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .brand-subtitle { font-size: 0.72rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+    .sidebar-nav { flex: 1; padding: 24px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .nav-item { display: flex; align-items: center; gap: 14px; padding: 13px 18px; color: var(--text-secondary); text-decoration: none; border-radius: var(--radius-md); font-size: 0.93rem; font-weight: 600; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+    .nav-item:hover { background: rgba(16, 185, 129, 0.08); color: var(--text-primary); border-color: var(--glass-border); transform: translateX(4px); }
+    .nav-item.active { background: linear-gradient(135deg, rgba(0, 245, 155, 0.18) 0%, rgba(16, 185, 129, 0.08) 100%); color: var(--neon-emerald-bright); border-color: rgba(0, 245, 155, 0.4); font-weight: 700; box-shadow: 0 4px 20px rgba(0, 245, 155, 0.15); }
+    .sidebar-footer { padding: 20px 18px; border-top: 1px solid var(--glass-border); display: flex; align-items: center; gap: 12px; background: rgba(2, 14, 11, 0.5); }
+    .farmer-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: 2px solid rgba(0, 245, 155, 0.4); display: flex; align-items: center; justify-content: center; font-size: 19px; }
+
+    .main-wrapper { margin-left: 280px; flex: 1; min-height: 100vh; display: flex; flex-direction: column; position: relative; z-index: 1; }
+    .top-header { height: 76px; background: rgba(3, 18, 14, 0.65); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); padding: 0 36px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 90; }
+    .content-area { padding: 34px 36px 50px 36px; flex: 1; }
+    
+    .view-section { display: none; }
+    .view-section.active { display: block; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px; margin-bottom: 30px; }
+    .card { background: var(--bg-surface); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 26px; box-shadow: var(--shadow-card); position: relative; }
+    .card-hero-glow { background: linear-gradient(135deg, rgba(4, 46, 35, 0.85) 0%, rgba(6, 32, 25, 0.95) 100%); border: 1px solid rgba(0, 245, 155, 0.25); box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 245, 155, 0.1); }
+    .stat-card { display: flex; align-items: center; justify-content: space-between; padding: 22px 24px; }
+    .stat-info .stat-label { font-size: 0.8rem; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+    .stat-info .stat-value { font-size: 2rem; font-weight: 800; margin: 6px 0 3px 0; font-family: var(--font-mono); }
+    .stat-icon { width: 58px; height: 58px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 26px; }
+    .stat-icon.green { background: rgba(0, 245, 155, 0.15); border: 1px solid rgba(0, 245, 155, 0.3); color: var(--neon-emerald-bright); }
+    .stat-icon.blue { background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); color: var(--water-cyan); }
+    .stat-icon.amber { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: var(--amber-sun); }
+    .stat-icon.purple { background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.3); color: #c084fc; }
+
+    .dashboard-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 26px; }
+    .btn { padding: 13px 24px; border-radius: var(--radius-md); font-size: 0.94rem; font-weight: 700; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 9px; transition: 0.25s; text-decoration: none; }
+    .btn-primary { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #021a14; font-weight: 800; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35); }
+    .btn-primary:hover { background: linear-gradient(135deg, var(--neon-emerald-bright) 0%, #10b981 100%); box-shadow: 0 8px 25px rgba(0, 245, 155, 0.45); transform: translateY(-2px); }
+    .btn-secondary { background: rgba(14, 53, 42, 0.6); border: 1px solid var(--glass-border); color: var(--text-primary); }
+    .btn-outline { background: rgba(16, 185, 129, 0.06); border: 1.5px solid rgba(0, 245, 155, 0.3); color: var(--neon-emerald-bright); }
+    .btn-outline:hover { background: rgba(0, 245, 155, 0.15); border-color: var(--neon-emerald-bright); transform: translateY(-2px); }
+    
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: var(--radius-full); font-size: 0.76rem; font-weight: 700; }
+    .badge.green { background: rgba(0, 245, 155, 0.14); border: 1px solid rgba(0, 245, 155, 0.35); color: var(--neon-emerald-bright); }
+    .badge.amber { background: rgba(245, 158, 11, 0.14); border: 1px solid rgba(245, 158, 11, 0.35); color: #fbbf24; }
+    .badge.blue { background: rgba(6, 182, 212, 0.14); border: 1px solid rgba(6, 182, 212, 0.35); color: #67e8f9; }
+
+    .slider-group { margin-bottom: 22px; }
+    .slider-header { display: flex; justify-content: space-between; font-size: 0.88rem; font-weight: 600; margin-bottom: 8px; }
+    .range-slider { width: 100%; height: 8px; border-radius: var(--radius-full); background: rgba(14, 53, 42, 0.8); accent-color: var(--neon-emerald-bright); }
+    .progress-container { height: 8px; background: rgba(14, 53, 42, 0.8); border-radius: var(--radius-full); overflow: hidden; margin: 6px 0; border: 1px solid var(--glass-border); }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, #059669 0%, var(--neon-emerald-bright) 100%); }
+
+    .soil-gauge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+    .gauge-item { background: rgba(4, 23, 18, 0.6); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 18px 14px; text-align: center; }
+    .gauge-item .gauge-val { font-size: 1.6rem; font-weight: 800; font-family: var(--font-mono); margin: 8px 0; }
+
+    .custom-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+    .custom-table th { background: rgba(4, 23, 18, 0.85); padding: 16px 20px; color: var(--text-secondary); border-bottom: 1px solid var(--glass-border); }
+    .custom-table td { padding: 16px 20px; border-bottom: 1px solid rgba(52, 211, 153, 0.1); }
+  </style>
+</head>
+<body>
+
+  <div class="bg-ambient-orb-1"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-icon">🌱</div>
+      <div>
+        <div class="brand-title">Smart Agro</div>
+        <div class="brand-subtitle">AI Precision OS</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" onclick="switchTab('dashboard')"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="nav-item" onclick="switchTab('crop-rec')"><i class="fas fa-seedling"></i> Crop Recommendation</a>
+      <a class="nav-item" onclick="switchTab('soil-health')"><i class="fas fa-vial"></i> Soil Health & Lab</a>
+      <a class="nav-item" onclick="switchTab('irrigation')"><i class="fas fa-faucet-drip"></i> Smart Irrigation</a>
+      <a class="nav-item" onclick="switchTab('history')"><i class="fas fa-chart-line"></i> Farm History</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="farmer-avatar">👨🌾</div>
+      <div>
+        <div style="font-weight: 700; font-size: 0.9rem;">Rajesh Patil</div>
+        <div style="font-size: 0.74rem; color: #a7f3d0;">Nagpur, India</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper">
+    <header class="top-header">
+      <div>
+        <h1 style="font-size: 1.45rem; font-weight: 800;">Agro Intelligence Hub</h1>
+        <p style="font-size: 0.84rem; color: var(--text-secondary);">Atmospheric precision telemetry & AI decision matrix</p>
+      </div>
+      <div style="display: flex; gap: 14px;">
+        <span class="badge blue" style="font-size: 0.88rem; padding: 8px 16px;">
+          <i class="fas fa-sun text-amber-400"></i> 28.5°C • Nagpur Station
+        </span>
+        <button class="btn btn-primary" onclick="switchTab('crop-rec')">
+          <i class="fas fa-wand-magic-sparkles"></i> Recommend Crop
+        </button>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <!-- DASHBOARD -->
+      <section id="tab-dashboard" class="view-section active">
+        <div class="stats-grid">
+          <div class="card stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Soil Quality Score</div>
+              <div class="stat-value" style="color: var(--neon-emerald-bright);">88.5/100</div>
+              <div class="stat-desc"><i class="fas fa-check-circle"></i> Prime Fertility Status</div>
+            </div>
+            <div class="stat-icon green"><i class="fas fa-heart-pulse"></i></div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Soil Moisture</div>
+              <div class="stat-value" style="color: #67e8f9;">58.0%</div>
+              <div class="stat-desc"><i class="fas fa-droplet"></i> Field Capacity</div>
+            </div>
+            <div class="stat-icon blue"><i class="fas fa-water"></i></div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Irrigation Status</div>
+              <div class="stat-value" style="font-size: 1.25rem; margin-top: 8px;"><span class="badge green">Optimal ✅</span></div>
+              <div class="stat-desc">No watering required today</div>
+            </div>
+            <div class="stat-icon amber"><i class="fas fa-faucet-drip"></i></div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Top Crop Match</div>
+              <div class="stat-value" style="font-size: 1.45rem;">Cotton</div>
+              <div class="stat-desc"><i class="fas fa-star text-amber-400"></i> 94.2% Match</div>
+            </div>
+            <div class="stat-icon purple"><i class="fas fa-seedling"></i></div>
+          </div>
+        </div>
+
+        <div class="dashboard-layout">
+          <div>
+            <div class="card card-hero-glow" style="margin-bottom: 26px;">
+              <div style="display: flex; justify-content: space-between;">
+                <div>
+                  <span class="badge green" style="margin-bottom: 10px;">🌦️ Live Agro Climate</span>
+                  <div style="font-size: 2.8rem; font-weight: 900; font-family: var(--font-mono); margin: 6px 0;">28.5°C</div>
+                  <div style="color: #a7f3d0;">Partly cloudy • Zero rainfall risk in 24h</div>
+                </div>
+                <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 14px 20px; border-radius: var(--radius-md); text-align: right;">
+                  <div style="font-size: 0.74rem; color: var(--text-secondary);">HUMIDITY</div>
+                  <div style="font-size: 1.25rem; font-weight: 800; font-family: var(--font-mono); color: #67e8f9;">62%</div>
+                  <div style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 4px;">WIND: 12 km/h</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 16px;">⚡ Smart Agriculture Quick Actions</h3>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;">
+                <button class="btn btn-outline" onclick="switchTab('crop-rec')" style="padding: 18px; flex-direction: column; gap: 10px;">
+                  <i class="fas fa-seedling" style="font-size: 24px;"></i>
+                  <span>Recommend Crop</span>
+                </button>
+                <button class="btn btn-outline" onclick="switchTab('soil-health')" style="padding: 18px; flex-direction: column; gap: 10px;">
+                  <i class="fas fa-vial" style="font-size: 24px;"></i>
+                  <span>Test Soil Health</span>
+                </button>
+                <button class="btn btn-outline" onclick="switchTab('irrigation')" style="padding: 18px; flex-direction: column; gap: 10px;">
+                  <i class="fas fa-faucet-drip" style="font-size: 24px;"></i>
+                  <span>Irrigation Plan</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px;">🧪 Soil Nutrients (NPK)</h3>
+              <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div>
+                  <div style="display:flex; justify-content:space-between; font-size:0.86rem;"><span>Nitrogen (N)</span><strong style="color: var(--neon-emerald-bright); font-family: var(--font-mono);">85 mg/kg</strong></div>
+                  <div class="progress-container"><div class="progress-bar" style="width: 70%;"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex; justify-content:space-between; font-size:0.86rem;"><span>Phosphorus (P)</span><strong style="color: var(--neon-emerald-bright); font-family: var(--font-mono);">48 mg/kg</strong></div>
+                  <div class="progress-container"><div class="progress-bar" style="width: 55%;"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex; justify-content:space-between; font-size:0.86rem;"><span>Potassium (K)</span><strong style="color: var(--neon-emerald-bright); font-family: var(--font-mono);">52 mg/kg</strong></div>
+                  <div class="progress-container"><div class="progress-bar" style="width: 60%;"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex; justify-content:space-between; font-size:0.86rem;"><span>Soil pH</span><strong style="color: var(--neon-emerald-bright); font-family: var(--font-mono);">6.8 (Neutral)</strong></div>
+                  <div class="progress-container"><div class="progress-bar" style="width: 68%;"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CROP REC -->
+      <section id="tab-crop-rec" class="view-section">
+        <div class="dashboard-layout">
+          <div class="card">
+            <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 16px;">🌾 Crop Recommendation Engine</h2>
+            <div class="slider-group">
+              <div class="slider-header"><span>Nitrogen (N): <strong id="val-n" style="color: var(--neon-emerald-bright);">85</strong> mg/kg</span></div>
+              <input type="range" class="range-slider" min="10" max="180" value="85" oninput="document.getElementById('val-n').textContent=this.value">
+            </div>
+            <div class="slider-group">
+              <div class="slider-header"><span>Phosphorus (P): <strong id="val-p" style="color: var(--neon-emerald-bright);">48</strong> mg/kg</span></div>
+              <input type="range" class="range-slider" min="10" max="150" value="48" oninput="document.getElementById('val-p').textContent=this.value">
+            </div>
+            <div class="slider-group">
+              <div class="slider-header"><span>Potassium (K): <strong id="val-k" style="color: var(--neon-emerald-bright);">52</strong> mg/kg</span></div>
+              <input type="range" class="range-slider" min="10" max="220" value="52" oninput="document.getElementById('val-k').textContent=this.value">
+            </div>
+            <div class="slider-group">
+              <div class="slider-header"><span>Soil pH: <strong id="val-ph" style="color: var(--neon-emerald-bright);">6.8</strong></span></div>
+              <input type="range" class="range-slider" min="4.0" max="9.5" step="0.1" value="6.8" oninput="document.getElementById('val-ph').textContent=this.value">
+            </div>
+            <div class="slider-group">
+              <div class="slider-header"><span>Soil Moisture: <strong id="val-moist" style="color: #67e8f9;">58</strong>%</span></div>
+              <input type="range" class="range-slider" min="10" max="95" value="58" oninput="document.getElementById('val-moist').textContent=this.value">
+            </div>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 14px;" onclick="runDemoPrediction()">
+              <i class="fas fa-microchip"></i> Run ML Crop Prediction
+            </button>
+          </div>
+
+          <div>
+            <div class="card" id="demoCropResult">
+              <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 16px;">🌱 Prediction Results</h3>
+              <div class="crop-card" style="border: 1.5px solid rgba(0, 245, 155, 0.4); background: rgba(0, 245, 155, 0.1);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <span style="font-size: 32px;">🌱</span>
+                    <strong style="font-size: 1.3rem; color: var(--neon-emerald-bright); margin-left: 8px;">Cotton</strong>
+                    <span class="badge green">Kharif Season</span>
+                  </div>
+                  <div style="font-size: 1.6rem; font-weight: 900; font-family: var(--font-mono); color: var(--neon-emerald-bright);">94.2%</div>
+                </div>
+                <div class="progress-container"><div class="progress-bar" style="width: 94.2%;"></div></div>
+                <p style="font-size: 0.9rem; color: #a7f3d0; margin-top: 10px;">
+                  Soil NPK and pH levels are in the prime optimum range for commercial Cotton cultivation.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SOIL HEALTH -->
+      <section id="tab-soil-health" class="view-section">
+        <div class="card mb-4">
+          <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 16px;">🧪 Comprehensive Soil Diagnostics</h2>
+          <div class="soil-gauge-grid">
+            <div class="gauge-item"><div style="font-size:0.78rem; color:var(--text-secondary);">Soil pH</div><div class="gauge-val" style="color:var(--neon-emerald-bright);">6.8</div><span class="badge green">Neutral Optimal</span></div>
+            <div class="gauge-item"><div style="font-size:0.78rem; color:var(--text-secondary);">Nitrogen (N)</div><div class="gauge-val" style="color:var(--neon-emerald-bright);">85 mg/kg</div><span class="badge green">Adequate</span></div>
+            <div class="gauge-item"><div style="font-size:0.78rem; color:var(--text-secondary);">Phosphorus (P)</div><div class="gauge-val" style="color:var(--neon-emerald-bright);">48 mg/kg</div><span class="badge green">Adequate</span></div>
+            <div class="gauge-item"><div style="font-size:0.78rem; color:var(--text-secondary);">Potassium (K)</div><div class="gauge-val" style="color:var(--neon-emerald-bright);">52 mg/kg</div><span class="badge green">Adequate</span></div>
+            <div class="gauge-item"><div style="font-size:0.78rem; color:var(--text-secondary);">Moisture</div><div class="gauge-val" style="color:#67e8f9;">58%</div><span class="badge blue">Field Capacity</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- IRRIGATION -->
+      <section id="tab-irrigation" class="view-section">
+        <div class="card card-hero-glow">
+          <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 16px;">💧 Smart Irrigation Plan</h2>
+          <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div style="background: rgba(4, 23, 18, 0.7); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 18px; text-align: center;">
+              <div style="font-size: 0.76rem; color: var(--text-secondary);">Pump Runtime Needed</div>
+              <div style="font-size: 1.8rem; font-weight: 800; font-family: var(--font-mono); color: #67e8f9; margin: 8px 0;">0.0 hrs</div>
+              <span class="badge green">No Pumping Needed</span>
+            </div>
+            <div style="background: rgba(4, 23, 18, 0.7); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 18px; text-align: center;">
+              <div style="font-size: 0.76rem; color: var(--text-secondary);">Water Deficit</div>
+              <div style="font-size: 1.8rem; font-weight: 800; font-family: var(--font-mono); color: var(--neon-emerald-bright); margin: 8px 0;">0 mm</div>
+              <span class="badge blue">0 Liters</span>
+            </div>
+            <div style="background: rgba(4, 23, 18, 0.7); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 18px; text-align: center;">
+              <div style="font-size: 0.76rem; color: var(--text-secondary);">Best Irrigation Window</div>
+              <div style="font-size: 1.15rem; font-weight: 800; color: #fbbf24; margin: 10px 0;">05:30 AM - 08:30 AM</div>
+              <span class="badge amber">Morning Interval</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HISTORY -->
+      <section id="tab-history" class="view-section">
+        <div class="card">
+          <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 16px;">📈 Past Soil & Crop Logs</h2>
+          <table class="custom-table">
+            <thead>
+              <tr><th>Date</th><th>Type</th><th>Parameters</th><th>Status / Result</th></tr>
+            </thead>
+            <tbody>
+              <tr><td style="font-family: var(--font-mono);">2026-09-29 14:30</td><td>Soil Test Plot A</td><td>pH 6.8, N:85, P:48, K:52</td><td><span class="badge green">Score: 88.5/100</span></td></tr>
+              <tr><td style="font-family: var(--font-mono);">2026-09-29 14:35</td><td>Crop Advisory</td><td>Cotton, Maize, Soybean</td><td><span class="badge green">94.2% Match</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+    }
+    function runDemoPrediction() {
+      alert('ML Prediction evaluated! Top matches: Cotton (94.2%), Maize (89.1%), Soybean (84.6%)');
+    }
+  </script>
+</body>
+</html>
